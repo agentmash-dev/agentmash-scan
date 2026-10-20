@@ -30,7 +30,7 @@
           "kind": "trailer",
           "key": "Claude-Session",
           "pattern": "^https://claude\\.ai/code/session_",
-          "example": "Claude-Session: https://claude.ai/code/session_012tgsfkFuM4dSnRf92adWjx",
+          "example": "Claude-Session: https://claude.ai/code/session_<id>",
           "status": "verified",
           "evidence": ["https://github.com/maestroDev3/GreenFriend/commit/7fb334dc4760bd2abaaa0882e14be7a9d58996b9"]
         },
@@ -185,7 +185,7 @@
         {
           "kind": "trailer",
           "key": "Copilot-Session",
-          "example": "Copilot-Session: 9df06ece-6920-4e47-8e73-70c397aeaf85",
+          "example": "Copilot-Session: <uuid>",
           "status": "verified",
           "evidence": ["https://github.com/microsoft/typescript-go/commit/04f7f3db2bf2b3fe51eedba2aafcb05a907ffa94"]
         },
@@ -423,8 +423,25 @@
       "id": "factory-droid",
       "name": "Factory Droid",
       "signals": [
-        { "kind": "author", "name_pattern": "^factory-droid\\[bot\\]$", "status": "unverified", "evidence": [] },
-        { "kind": "trailer", "key": "Co-authored-by", "name_pattern": "^factory-droid\\[bot\\]$", "status": "unverified", "evidence": [] }
+        {
+          "kind": "author",
+          "email_pattern": "^\\d+\\+factory-droid\\[bot\\]@users\\.noreply\\.github\\.com$",
+          "example": "factory-droid[bot] <138933559+factory-droid[bot]@users.noreply.github.com>",
+          "status": "verified",
+          "evidence": ["https://github.com/abnerjacobsen/deepdiff-mcp/commit/e4a70031fd2515d168b7bc570723ac7e11d4eb31"]
+        },
+        { "kind": "branch", "prefix": "droid/", "status": "unverified", "evidence": [] },
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "email_pattern": "^\\d+\\+factory-droid\\[bot\\]@users\\.noreply\\.github\\.com$",
+          "example": "Co-authored-by: factory-droid[bot] <138933559+factory-droid[bot]@users.noreply.github.com>",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/thedavidweng/tg-drive/commit/5b8fd4263cc544387f8e163b34cbef4e688a99d4",
+            "https://github.com/yagnyam-in/proxy-parent/commit/59bb644b5e8ed070e9024f894b9247544cd7cd24"
+          ]
+        }
       ]
     }
   ],
