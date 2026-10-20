@@ -48,8 +48,13 @@ export async function main(argv: readonly string[]): Promise<number> {
     const look = { showRepo: cli.showRepo, command: DEFAULT_COMMAND };
     if (cli.card) {
       const { writeCards } = await import("./card/render.js");
-      const [landscape, portrait] = await writeCards(result, process.cwd(), look);
-      say(`\nCard saved: ${landscape} (1200x675, X) and ${portrait} (1080x1350, Instagram, LinkedIn)\n`);
+      try {
+        const [landscape, portrait] = await writeCards(result, process.cwd(), look);
+        say(`\nCard saved: ${landscape} (1200x675, X) and ${portrait} (1080x1350, Instagram, LinkedIn)\n`);
+      } catch (e) {
+        process.stderr.write(`agentmash-scan: could not save the card in ${process.cwd()}: ${(e as Error).message}\n`);
+        return 1;
+      }
     }
     const open = async (url: string): Promise<boolean> => process.env["BROWSER"] !== "none" && (await openUrl(url));
     if (cli.share) {
