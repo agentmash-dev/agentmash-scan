@@ -388,8 +388,25 @@
       "id": "amp",
       "name": "Amp",
       "signals": [
-        { "kind": "trailer", "key": "Amp-Thread-ID", "status": "unverified", "evidence": [] },
-        { "kind": "trailer", "key": "Co-authored-by", "email_pattern": "^amp@ampcode\\.com$", "status": "unverified", "evidence": [] }
+        {
+          "kind": "trailer",
+          "key": "Amp-Thread-ID",
+          "pattern": "^https://ampcode\\.com/threads/T-",
+          "example": "Amp-Thread-ID: https://ampcode.com/threads/T-<id>",
+          "status": "verified",
+          "evidence": ["https://github.com/unkeyed/unkey/commit/192377d5f52f217323bfd6c1a96d12c2fdddc964"]
+        },
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "email_pattern": "^amp@ampcode\\.com$",
+          "example": "Co-authored-by: Amp <amp@ampcode.com>",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/unkeyed/unkey/commit/192377d5f52f217323bfd6c1a96d12c2fdddc964",
+            "https://github.com/unkeyed/unkey/commit/da20871f6161cf27a15e8b844114736fa2d2c3c9"
+          ]
+        }
       ]
     },
     {
