@@ -231,7 +231,8 @@
         {
           "kind": "author",
           "email_pattern": "^\\d+\\+devin-ai-integration\\[bot\\]@users\\.noreply\\.github\\.com$",
-          "example": "devin-ai-integration[bot] <158243242+devin-ai-integration[bot]@users.noreply.github.com> (display name also seen as `Devin AI`)",
+          "example": "devin-ai-integration[bot] <158243242+devin-ai-integration[bot]@users.noreply.github.com>",
+          "note": "display name also seen as Devin AI, so the rule matches the email",
           "status": "verified",
           "evidence": [
             "https://github.com/chhoumann/quickadd/commit/dc9a6504c3c8704d743b0c08fdd8343bd375883f",
