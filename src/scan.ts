@@ -2,7 +2,8 @@ import { performance } from "node:perf_hooks";
 import { resolve } from "node:path";
 import { branchAgent, classify, type Commit } from "./attribute.js";
 import { readLog } from "./git/log.js";
-import { gitVersion, repoInfo, resolveRef, runGit } from "./git/run.js";
+import { gitVersion, repoInfo, resolveRef, runGit, type RepoInfo } from "./git/run.js";
+import { countOverlaps, generatedPaths, type OverlapResult } from "./overlaps.js";
 import { compileRules, loadRulesFile, type Rules, type RulesFile } from "./rules.js";
 import { VERSION } from "./version.js";
 
@@ -11,6 +12,8 @@ export interface ScanOptions {
   cwd?: string;
   /** period in days; default 90 */
   days?: number;
+  /** overlap window in hours; default 24 */
+  windowHours?: number;
   /** branch or commit to scan; default the current HEAD */
   branch?: string;
   /** "now" for the period; tests pin it */
@@ -46,11 +49,13 @@ export interface ScanResult {
     shallowBoundary: number;
   };
   agents: AgentCount[];
+  overlaps: OverlapResult;
   timingsMs: Record<string, number>;
 }
 
 export interface ScanContext {
   cwd: string;
+  info: RepoInfo;
   rules: Rules;
   commits: Commit[];
 }
@@ -60,6 +65,8 @@ export async function collect(opts: ScanOptions = {}): Promise<ScanContext & { r
   const cwd = resolve(opts.cwd ?? process.cwd());
   const days = opts.days ?? 90;
   if (!(days > 0)) throw new RangeError("days must be a positive number");
+  const windowHours = opts.windowHours ?? 24;
+  if (!(windowHours > 0)) throw new RangeError("the window must be a positive number of hours");
   const now = opts.now ?? new Date();
   const until = Math.floor(now.getTime() / 1000);
   const since = opts.limit !== undefined ? 0 : until - Math.round(days * 86400);
@@ -89,6 +96,12 @@ export async function collect(opts: ScanOptions = {}): Promise<ScanContext & { r
   }
   const commits = classify(raw, rules, { branchAgents });
   const t3 = performance.now();
+
+  // only files an agent touched can be in an overlap, so only those need the .gitattributes lookup
+  const agentFiles = commits.filter((c) => c.bucket === "agent" && !c.isMerge).flatMap((c) => c.files);
+  const generated = info.bare ? new Set<string>() : await generatedPaths(info.root, agentFiles);
+  const overlaps = countOverlaps({ commits, rules, windowHours, generated });
+  const t4 = performance.now();
 
   const nonMerge = commits.filter((c) => !c.isMerge);
   const perAgent = new Map<string, number>();
@@ -121,13 +134,15 @@ export async function collect(opts: ScanOptions = {}): Promise<ScanContext & { r
     agents: [...perAgent]
       .map(([id, n]) => ({ id, name: rules.agents.get(id) ?? id, commits: n }))
       .sort(byCountThenName((x) => x.commits)),
+    overlaps,
     timingsMs: {
       setup: Math.round(t1 - t0),
       log: Math.round(t2 - t1),
       attribution: Math.round(t3 - t2),
+      overlaps: Math.round(t4 - t3),
     },
   };
-  return { cwd, rules, commits, result };
+  return { cwd, info, rules, commits, result };
 }
 
 export async function scan(opts: ScanOptions = {}): Promise<ScanResult> {

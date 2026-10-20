@@ -99,6 +99,8 @@ export const hasMergeTree = (v: GitVersion): boolean => v.major > 2 || (v.major 
 export interface RepoInfo {
   /** directory name of the work tree, or of the bare repo without .git */
   name: string;
+  /** the work tree root; the git dir for a bare repo */
+  root: string;
   gitDir: string;
   objectsDir: string;
   bare: boolean;
@@ -121,13 +123,12 @@ export async function repoInfo(cwd: string): Promise<RepoInfo> {
   }
   const [gitDir = "", bare = "", shallow = "", objects = "", shallowPath = ""] = lines;
   const isBare = bare === "true";
-  let name: string;
-  if (isBare) {
-    name = basename(gitDir).replace(/\.git$/, "");
-  } else {
+  let root = gitDir;
+  if (!isBare) {
     const { stdout } = await runGit(["rev-parse", "--show-toplevel"], { cwd });
-    name = basename(stdout.trim());
+    root = stdout.trim();
   }
+  const name = isBare ? basename(gitDir).replace(/\.git$/, "") : basename(root);
   const shallowFile = resolve(cwd, shallowPath);
   const boundary =
     shallow === "true" && existsSync(shallowFile)
@@ -135,6 +136,7 @@ export async function repoInfo(cwd: string): Promise<RepoInfo> {
       : new Set<string>();
   return {
     name,
+    root,
     gitDir,
     objectsDir: resolve(cwd, objects),
     bare: isBare,
