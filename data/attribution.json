@@ -242,8 +242,37 @@
       "id": "gemini-cli",
       "name": "Gemini CLI",
       "signals": [
-        { "kind": "trailer", "key": "Co-authored-by", "name_pattern": "^Gemini\\b", "status": "unverified", "evidence": [] },
-        { "kind": "message", "pattern": "Generated with \\[?Gemini CLI\\b", "status": "unverified", "evidence": [] }
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "name_pattern": "^Gemini CLI$",
+          "example": "Co-Authored-By: Gemini CLI <noreply@google.com>",
+          "note": "written by a wrapper (\"via agent-pager\"); the CLI itself showed no default trailer",
+          "status": "verified",
+          "evidence": ["https://github.com/a60708090xun/ccs-dashboard/commit/97b505782c5af4c77f7afa77f1624d5ad6da06d2"]
+        },
+        {
+          "kind": "message",
+          "pattern": "Generated with \\[?Gemini CLI\\b",
+          "flags": "i",
+          "example": "🤖 Generated with [Gemini CLI](https://github.com/google-gemini/gemini-cli)",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/iray-tno/ankiniki/commit/5dd86a1c4d6ec693b4553f07166eb16447a408b5",
+            "https://github.com/charchess/vixens/commit/8614b9022de39286477518fd715dc566bdade638"
+          ]
+        },
+        {
+          "kind": "author",
+          "name_pattern": "^gemini-cli\\[bot\\]$",
+          "example": "gemini-cli[bot] <gemini-cli[bot]@users.noreply.github.com>",
+          "note": "ambiguous: the same name also signs release bumps (chore(release): bump version) in gemini-cli forks",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/mscraftsman/generative-ai/commit/9972d0c9e61d940eea09f25c0fa5deef02f1f0fb",
+            "https://github.com/Woiny27/gemini-cli/commit/f8678f9e9def05a6b7753b90d95db33e9a9684de"
+          ]
+        }
       ]
     },
     {
