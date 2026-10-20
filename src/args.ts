@@ -3,7 +3,7 @@ import type { ScanOptions } from "./scan.js";
 
 export const HELP = `Count how often your AI coding agents stepped on each other's files.
 
-Usage: npx agentmash-scan [path] [options]
+Usage: npx agentmash scan [path] [options]      (or npx agentmash-scan)
 
   --days <n>          period to scan (default 90)
   --window <time>     how close two changes must be: 6h, 24h, 3d, 90m (default 24h)

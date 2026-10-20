@@ -3,8 +3,10 @@
 Count how often your AI coding agents stepped on each other's files.
 
 ```
-npx agentmash-scan
+npx agentmash scan
 ```
+
+`npx agentmash-scan` runs the same thing directly.
 
 Runs on your machine, reads git history only, sends nothing anywhere.
 
@@ -33,7 +35,7 @@ Counted when two agent sessions changed the same file within 24h of each other.
 This is a lower bound: rebases and squash merges hide conflicts.
 Attribution is heuristic: 20 commits had no agent mark.
 
-Share your number:   npx agentmash-scan --card
+Share your number:   npx agentmash scan --card
 Catch it live:       npx agentmash login
 ```
 

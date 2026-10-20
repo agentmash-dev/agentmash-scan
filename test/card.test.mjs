@@ -34,7 +34,7 @@ describe("card and share", () => {
     assert.match(svg, />3</);
     assert.match(svg, /times my AI agents stepped on each other in 90 days/);
     assert.match(svg, /Claude Code · Codex · Cursor/);
-    assert.match(svg, />npx agentmash-scan</);
+    assert.match(svg, />npx agentmash scan</);
   });
 
   test("no file paths and no repo name unless asked", () => {
@@ -79,7 +79,7 @@ describe("card and share", () => {
 
   test("the share text has numbers and agent names only", () => {
     const text = shareText(result);
-    assert.equal(text, "My AI agents stepped on each other 3 times in 90 days.\nClaude Code · Codex · Cursor · Aider · Amp · Antigravity · Devin · Factory Droid · Gemini CLI · Gemini Code Assist · GitHub Copilot · Jules · OpenCode\nnpx agentmash-scan");
+    assert.equal(text, "My AI agents stepped on each other 3 times in 90 days.\nClaude Code · Codex · Cursor · Aider · Amp · Antigravity · Devin · Factory Droid · Gemini CLI · Gemini Code Assist · GitHub Copilot · Jules · OpenCode\nnpx agentmash scan");
     const url = shareUrl(text);
     assert.ok(url.startsWith("https://x.com/intent/post?text="));
     assert.equal(decodeURIComponent(url.split("text=")[1]), text);

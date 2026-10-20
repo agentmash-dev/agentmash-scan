@@ -7,7 +7,8 @@ export interface ReportOptions {
   command?: string;
 }
 
-export const DEFAULT_COMMAND = "npx agentmash-scan";
+/** what people copy from the card and the post: the agentmash CLI hands `scan` to this package */
+export const DEFAULT_COMMAND = "npx agentmash scan";
 
 const fmt = (n: number): string => n.toLocaleString("en-US");
 const plural = (n: number, one: string, many: string): string => `${fmt(n)} ${n === 1 ? one : many}`;
