@@ -1,0 +1,46 @@
+{
+  "name": "agentmash-scan",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Count how often AI coding agents stepped on each other's files in your git history. Runs locally, no login.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "data"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test test/"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "git",
+    "ai-agents",
+    "claude-code",
+    "codex",
+    "cursor",
+    "copilot",
+    "merge-conflicts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agentmash-dev/agentmash-scan.git"
+  },
+  "homepage": "https://agentmash.dev",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.tgz
+.DS_Store
+
+# scan output
+scan.png
+scan-*.png
+
+# local-only discovery data (repo names stay off GitHub)
+*.local.*
+reference/clones/
