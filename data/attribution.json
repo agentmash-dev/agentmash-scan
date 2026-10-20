@@ -369,7 +369,17 @@
       "id": "opencode",
       "name": "OpenCode",
       "signals": [
-        { "kind": "author", "name_pattern": "^opencode-agent\\[bot\\]$", "status": "unverified", "evidence": [] },
+        {
+          "kind": "author",
+          "name_pattern": "^opencode-agent\\[bot\\]$",
+          "example": "opencode-agent[bot] <opencode-agent[bot]@users.noreply.github.com>",
+          "note": "the OpenCode GitHub agent; the same name also signs nightly publish commits in OpenCode's own repo",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/cloudflare/partykit/commit/c31b339eda82ceee669318decd9feb2c254ef339",
+            "https://github.com/Qureshi-Inc/ezpm-cloud/commit/2ce2ab234e994b64f9848b72ba5783d2976636c9"
+          ]
+        },
         {
           "kind": "trailer",
           "key": "Co-authored-by",
