@@ -247,6 +247,28 @@
       ]
     },
     {
+      "id": "antigravity",
+      "name": "Antigravity",
+      "signals": [
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "email_pattern": "^antigravity@gemini\\.google\\.com$",
+          "example": "Co-authored-by: Antigravity <antigravity@gemini.google.com>",
+          "status": "verified",
+          "evidence": ["https://github.com/kidthales/tol-palettes/commit/a57787187820e259e1863f039d29b2739c25f9e1"]
+        },
+        {
+          "kind": "trailer",
+          "key": "Generated-by",
+          "pattern": "^Antigravity\\b",
+          "example": "Generated-by: Antigravity (Gemini 4 Argon)",
+          "status": "verified",
+          "evidence": ["https://github.com/kidthales/tol-palettes/commit/a57787187820e259e1863f039d29b2739c25f9e1"]
+        }
+      ]
+    },
+    {
       "id": "gemini-code-assist",
       "name": "Gemini Code Assist",
       "signals": [

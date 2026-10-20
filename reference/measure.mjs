@@ -269,7 +269,8 @@ if (feed.length) {
   const gitDir = git(["rev-parse", "--absolute-git-dir"]).trim();
   const res = spawnSync(
     "git",
-    ["-C", repo, "merge-tree", "--write-tree", "--stdin", "-z", "--name-only", "--no-messages"],
+    // --allow-unrelated-histories: without it one subtree-style merge aborts the whole batch
+    ["-C", repo, "merge-tree", "--write-tree", "--stdin", "-z", "--name-only", "--no-messages", "--allow-unrelated-histories"],
     {
       input: feed.map((c) => c.parents.join(" ")).join("\n") + "\n",
       encoding: "utf8",
