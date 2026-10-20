@@ -12,6 +12,8 @@ Usage: npx agentmash-scan [path] [options]
   --card              save scan.png (1200x675, X) and scan-1080x1350.png (Instagram, LinkedIn)
   --share             open a post on X with your number
   --show-repo         put the repository name on the card and in the post
+  --contribute        open agentmash.dev with your anonymous counts for the monthly report;
+                      nothing is sent unless you press Send there
   --agent-bot <name>  count a bot author as an agent, e.g. --agent-bot "keppo-bot[bot]"
   -v, --version       print the version
   -h, --help          print this help
@@ -43,6 +45,7 @@ export interface Cli {
   card: boolean;
   share: boolean;
   showRepo: boolean;
+  contribute: boolean;
   help: boolean;
   version: boolean;
 }
@@ -61,6 +64,7 @@ export function parseCli(argv: readonly string[]): Cli {
         card: { type: "boolean" },
         share: { type: "boolean" },
         "show-repo": { type: "boolean" },
+        contribute: { type: "boolean" },
         "agent-bot": { type: "string", multiple: true },
         version: { type: "boolean", short: "v" },
         help: { type: "boolean", short: "h" },
@@ -85,6 +89,7 @@ export function parseCli(argv: readonly string[]): Cli {
     card: values.card ?? false,
     share: values.share ?? false,
     showRepo: values["show-repo"] ?? false,
+    contribute: values.contribute ?? false,
     help: values.help ?? false,
     version: values.version ?? false,
   };
