@@ -1,0 +1,49 @@
+{
+  "commits": {
+    "total": 70,
+    "merges": 6,
+    "nonMerge": 64,
+    "agent": 39,
+    "unattributed": 20,
+    "automation": 4,
+    "unknownBots": [{ "name": "acme-agent[bot]", "commits": 1 }],
+    "multiAgent": 1,
+    "shallowBoundary": 0
+  },
+  "agents": {
+    "Claude Code": 14,
+    "Codex": 9,
+    "Cursor": 5,
+    "Aider": 2,
+    "Amp": 1,
+    "Antigravity": 1,
+    "Devin": 1,
+    "Factory Droid": 1,
+    "Gemini CLI": 1,
+    "Gemini Code Assist": 1,
+    "GitHub Copilot": 1,
+    "Jules": 1,
+    "OpenCode": 1
+  },
+  "overlaps": {
+    "6h": { "agentAgent": 1, "agentHuman": 1 },
+    "24h": { "agentAgent": 3, "agentHuman": 1 },
+    "72h": { "agentAgent": 6, "agentHuman": 1 }
+  },
+  "hottest24h": [
+    { "path": "src/api.ts", "overlaps": 2 },
+    { "path": "src/edge.ts", "overlaps": 1 }
+  ],
+  "merges": {
+    "total": 6,
+    "rerun": 5,
+    "octopus": 1,
+    "missingParents": 0,
+    "unchecked": 0,
+    "conflicted": 2,
+    "resolvers": [
+      { "name": "Claude Code", "merges": 1 },
+      { "name": "person", "merges": 1 }
+    ]
+  }
+}
