@@ -15,7 +15,7 @@ Status: discovery done, waiting for approval. Numbers behind every decision are 
 - **Actor**: (agent, person). Alice's Claude Code and Bob's Claude Code are two actors.
 - **Overlap**: a (file, commit B) pair where an earlier commit A touched the same file, `B.authorTime - A.authorTime <= window`, both are agent commits, and `actor(A) != actor(B)`. Each (file, B) counts once. Author time, because rebases rewrite committer time.
 - **Agent vs human overlap**: same rule with one side Unattributed and a different person. Counted and printed, not in the headline (see open questions).
-- **Noise**: lockfiles, `CHANGELOG.md`, and commits touching more than 100 files are left out of overlaps (rules in `data/attribution.json` under `noise`). Automation and unknown bots are left out of overlaps.
+- **Noise**: lockfiles, `CHANGELOG.md`, and commits touching more than 100 files are left out of overlaps (rules in `data/attribution.json` under `noise`); together they were 35% of unfiltered agent/agent overlaps. Generated code (`*_generated.*`, `*.gen.*`, OpenAPI output, `linguist-generated` in `.gitattributes`) showed up among the hottest files and joins the filter in milestone 2. Automation and unknown bots are left out of overlaps.
 - **Conflicted merge**: a two-parent merge in the commit set for which `git merge-tree --write-tree` reports a conflict. Octopus merges are counted and skipped (git's octopus strategy refuses conflicting merges, so a recorded octopus merge was clean). Merges with a missing parent (shallow clone) are counted and skipped with a warning.
 - **Resolver**: attribution of the merge commit itself (author + trailers in its message).
 - **Hottest files**: top 5 files by headline overlaps. Terminal only, never on the card or in `--share`.
@@ -66,7 +66,7 @@ Rejected: `canvas` (downloads a prebuilt from GitHub at install, falls back to n
 
 ## Speed budget (10K commits, target < 10 s)
 
-Measured (DISCOVERY.md §5): 10,000 real commits with 1,031 merges in 1.15 s. The git log pass and merge-tree are the two costs; parsing, attribution and overlaps together are under 0.2 s.
+Measured (DISCOVERY.md §5): the newest 10,000 commits take 0.6–3.5 s in four real repos (1.15 s with 1,031 merges; 2.95 s in the largest repo, 20,623 commits, whose whole history takes 3.49 s). The git log pass (0.4–1.0 s per 10,000 commits) and merge-tree are the two costs; parsing, attribution and overlaps together stay under 0.31 s.
 
 The risk is merge-tree outliers, not volume: one branch-promotion merge with 8,207 files changed between its parents took 2.2 s on its own, while the other 16 merges in that repo took about 20 ms each. So `git/merges.ts`:
 - reruns only merges inside `--days`;
@@ -84,7 +84,7 @@ Attribution, one commit per verified signal, each on its own file so it creates 
 - alice + `Co-authored-by: Codex <codex@openai.com>`, bob + `Co-authored-by: Cursor <cursoragent@cursor.com>`, `Cursor Agent <cursoragent@cursor.com>` author with carol as co-author (person = carol), `copilot-swe-agent[bot]` with alice as co-author, one per other verified agent
 - one squash-style commit with Claude and Codex trailers (multi-agent, primary Claude Code)
 - branch `codex/feature` with two plain commits merged as `Merge pull request #7 from alice/codex/feature` (both count as Codex through the branch rule)
-- 6 plain human commits (Unattributed), 2 `dependabot[bot]` commits (automation), 1 `keppo-bot[bot]` commit (unknown bot)
+- 6 plain human commits (Unattributed), 2 `dependabot[bot]` commits (automation), 1 `acme-agent[bot]` commit (unknown bot)
 - 1 commit dated 91 days before `now` (outside `--days 90`)
 
 Overlaps on `src/api.ts`:
@@ -117,10 +117,11 @@ Shallow case: `git clone --depth 3 file://<fixture>` must report the skipped mer
 
 ## Open questions for Damir
 
-1. `scan` or `wrapped`.
-2. Default window.
-3. Agent vs human overlaps in the headline or not.
-4. Unknown bots (custom GitHub Apps that write features): show by name only, or let the user mark them as agents with a flag.
-5. `--contribute` against "no network calls in the package": the spec asks it to send counts, the constraints forbid network calls. Proposal: `--contribute` opens a prefilled page in the browser (counts in the URL fragment, which never reaches a server until the person presses submit there), so the package itself never opens a socket.
+Recommendation first, numbers from DISCOVERY.md §3, §4 and §10.
 
-Recommendations with numbers are in the chat reply and in DISCOVERY.md.
+1. **`scan` or `wrapped`: `scan`.** At least 8 "wrapped" packages for coding agents are on npm already, 7 published in 2026, all of them personal usage recaps (tokens, sessions), which this tool does not compute. `agentmash-scan` is free on npm and becomes `npx agentmash scan` later without a rename.
+2. **Default window: 24h.** The count grows smoothly with the window (6h keeps a median 0.45x of 24h, 72h gives 1.9x), so no cut-off is hiding in the data. 6h shows zero in 3 of 9 repos; 72h doubles human/human overlaps too (4,988 to 9,829), so most of what it adds is coincidence. On squash repos the time is the landing time, so 24h reads as "landed the same day".
+3. **Agent vs human: not in the headline, printed one line below it.** Agent/human overlaps are a median 8.7x the agent/agent count, and the "human" side is the Unattributed bucket, which in the agent-heavy repos is 92–96% written by people who use agents. It would turn the headline into a number about our weakest classification. Related decision already taken in the definitions, flag it if you disagree: overlaps are counted per actor (agent + person), so Alice's Claude Code vs Bob's Claude Code counts. Counting per tool only would cut the total from 1,031 to 429, and to near zero in single-agent repos.
+4. **Unknown bots** (custom GitHub Apps that write features, up to 45% of a repo's commits): print them by name, and add a `--agent-bot <name>` flag so a user can count one as an agent. Not decided.
+5. **`--contribute` vs "no network calls in the package"**: the spec asks it to send counts, the constraints forbid network calls. Proposal: `--contribute` opens a prefilled page in the browser (counts in the URL fragment, which never reaches a server until the person presses submit there), so the package itself never opens a socket. Not decided.
+6. **Headline wording**: an overlap is "landed on the same file within 24h", not a conflict; conflicted merges were 11 in 90 days across 9 repos. Keep "stepped on each other" in the headline, and print the definition on the line under it so the number survives a skeptical reply.
