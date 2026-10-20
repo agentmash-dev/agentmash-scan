@@ -17,7 +17,8 @@
   },
   "files": [
     "dist",
-    "data"
+    "data",
+    "fonts"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -47,5 +48,8 @@
   "devDependencies": {
     "@types/node": "^20.19.43",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@resvg/resvg-wasm": "2.6.2"
   }
 }
