@@ -3,6 +3,7 @@ import { GitError } from "./git/run.js";
 import { DEFAULT_COMMAND, formatReport, toJSON } from "./report.js";
 import { HELP, parseCli, UsageError, type Cli } from "./args.js";
 import { scan } from "./scan.js";
+import { openUrl, shareText, shareUrl } from "./share.js";
 import { VERSION } from "./version.js";
 
 const useColor = (): boolean => process.stdout.isTTY === true && !("NO_COLOR" in process.env) && process.env["TERM"] !== "dumb";
@@ -26,6 +27,21 @@ export async function main(argv: readonly string[]): Promise<number> {
   try {
     const result = await scan(cli.options);
     process.stdout.write(cli.json ? toJSON(result) : formatReport(result, { color: useColor(), command: DEFAULT_COMMAND }));
+    // with --json, stdout stays pure JSON and everything else goes to stderr
+    const say = (s: string): void => {
+      (cli.json ? process.stderr : process.stdout).write(s);
+    };
+    const look = { showRepo: cli.showRepo, command: DEFAULT_COMMAND };
+    if (cli.card) {
+      const { writeCards } = await import("./card/render.js");
+      const [landscape, portrait] = await writeCards(result, process.cwd(), look);
+      say(`\nCard saved: ${landscape} (1200x675, X) and ${portrait} (1080x1350, Instagram, LinkedIn)\n`);
+    }
+    if (cli.share) {
+      const url = shareUrl(shareText(result, look));
+      const opened = process.env["BROWSER"] !== "none" && (await openUrl(url));
+      say(opened ? `\nYour post is open in the browser. If it isn't: ${url}\n` : `\nPost it from here: ${url}\n`);
+    }
     return 0;
   } catch (e) {
     if (e instanceof GitError) {

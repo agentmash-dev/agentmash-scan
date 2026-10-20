@@ -9,6 +9,9 @@ Usage: npx agentmash-scan [path] [options]
   --window <time>     how close two changes must be: 6h, 24h, 3d, 90m (default 24h)
   --branch <name>     branch or commit to scan (default the current branch)
   --json              print the numbers as JSON
+  --card              save scan.png (1200x675, X) and scan-1080x1350.png (Instagram, LinkedIn)
+  --share             open a post on X with your number
+  --show-repo         put the repository name on the card and in the post
   --agent-bot <name>  count a bot author as an agent, e.g. --agent-bot "keppo-bot[bot]"
   -v, --version       print the version
   -h, --help          print this help
@@ -37,6 +40,9 @@ export function parseDays(text: string): number {
 export interface Cli {
   options: ScanOptions;
   json: boolean;
+  card: boolean;
+  share: boolean;
+  showRepo: boolean;
   help: boolean;
   version: boolean;
 }
@@ -52,6 +58,9 @@ export function parseCli(argv: readonly string[]): Cli {
         window: { type: "string" },
         branch: { type: "string" },
         json: { type: "boolean" },
+        card: { type: "boolean" },
+        share: { type: "boolean" },
+        "show-repo": { type: "boolean" },
         "agent-bot": { type: "string", multiple: true },
         version: { type: "boolean", short: "v" },
         help: { type: "boolean", short: "h" },
@@ -70,5 +79,13 @@ export function parseCli(argv: readonly string[]): Cli {
   if (values["agent-bot"]?.length) options.agentBots = values["agent-bot"];
   const now = process.env["AGENTMASH_SCAN_NOW"];
   if (now) options.now = new Date(now);
-  return { options, json: values.json ?? false, help: values.help ?? false, version: values.version ?? false };
+  return {
+    options,
+    json: values.json ?? false,
+    card: values.card ?? false,
+    share: values.share ?? false,
+    showRepo: values["show-repo"] ?? false,
+    help: values.help ?? false,
+    version: values.version ?? false,
+  };
 }
