@@ -459,8 +459,8 @@
     "note": "any other bot: printed by name so the user can see it (custom GitHub Apps like keppo-bot[bot] write features), never counted as an agent or a human"
   },
   "noise": {
-    "path_pattern": "(^|/)(package-lock\\.json|pnpm-lock\\.yaml|yarn\\.lock|bun\\.lockb?|Cargo\\.lock|go\\.sum|poetry\\.lock|uv\\.lock|Gemfile\\.lock|composer\\.lock|CHANGELOG\\.md)$",
+    "path_pattern": "(^|/)(package-lock\\.json|pnpm-lock\\.yaml|yarn\\.lock|bun\\.lockb?|Cargo\\.lock|go\\.sum|poetry\\.lock|uv\\.lock|Gemfile\\.lock|composer\\.lock|CHANGELOG\\.md)$|(^|/)[^/]*[._-]generated\\.[^/]+$|(^|/)[^/]*\\.gen\\.[^/]+$",
     "max_files_per_commit": 100,
-    "note": "lockfiles, changelogs and commits touching more than 100 files are left out of overlaps"
+    "note": "lockfiles, changelogs, generated files (name_generated.ext, name.gen.ext, or linguist-generated in .gitattributes) and commits touching more than 100 files are left out of overlaps"
   }
 }
