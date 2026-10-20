@@ -2,6 +2,7 @@ import { performance } from "node:perf_hooks";
 import { resolve } from "node:path";
 import { branchAgent, classify, type Commit } from "./attribute.js";
 import { readLog } from "./git/log.js";
+import { checkMerges, type MergeResult } from "./git/merges.js";
 import { gitVersion, repoInfo, resolveRef, runGit, type RepoInfo } from "./git/run.js";
 import { countOverlaps, generatedPaths, type OverlapResult } from "./overlaps.js";
 import { compileRules, loadRulesFile, type Rules, type RulesFile } from "./rules.js";
@@ -24,6 +25,8 @@ export interface ScanOptions {
   rules?: RulesFile;
   /** bot author names to count as agents */
   agentBots?: readonly string[];
+  /** stop rerunning merges after this long; default 6000 ms */
+  mergeBudgetMs?: number;
 }
 
 export interface AgentCount {
@@ -50,6 +53,7 @@ export interface ScanResult {
   };
   agents: AgentCount[];
   overlaps: OverlapResult;
+  merges: MergeResult;
   timingsMs: Record<string, number>;
 }
 
@@ -72,7 +76,7 @@ export async function collect(opts: ScanOptions = {}): Promise<ScanContext & { r
   const since = opts.limit !== undefined ? 0 : until - Math.round(days * 86400);
   const rules = compileRules(opts.rules ?? loadRulesFile(), opts.agentBots ?? []);
 
-  const [info, ref] = await Promise.all([repoInfo(cwd), resolveRef(cwd, opts.branch), gitVersion(cwd)]);
+  const [info, ref, version] = await Promise.all([repoInfo(cwd), resolveRef(cwd, opts.branch), gitVersion(cwd)]);
   const t1 = performance.now();
   const raw = await readLog(cwd, {
     sha: ref.sha,
@@ -102,6 +106,15 @@ export async function collect(opts: ScanOptions = {}): Promise<ScanContext & { r
   const generated = info.bare ? new Set<string>() : await generatedPaths(info.root, agentFiles);
   const overlaps = countOverlaps({ commits, rules, windowHours, generated });
   const t4 = performance.now();
+  const merges = await checkMerges({
+    cwd,
+    objectsDir: info.objectsDir,
+    version,
+    commits,
+    rules,
+    ...(opts.mergeBudgetMs !== undefined ? { budgetMs: opts.mergeBudgetMs } : {}),
+  });
+  const t5 = performance.now();
 
   const nonMerge = commits.filter((c) => !c.isMerge);
   const perAgent = new Map<string, number>();
@@ -135,11 +148,13 @@ export async function collect(opts: ScanOptions = {}): Promise<ScanContext & { r
       .map(([id, n]) => ({ id, name: rules.agents.get(id) ?? id, commits: n }))
       .sort(byCountThenName((x) => x.commits)),
     overlaps,
+    merges,
     timingsMs: {
       setup: Math.round(t1 - t0),
       log: Math.round(t2 - t1),
       attribution: Math.round(t3 - t2),
       overlaps: Math.round(t4 - t3),
+      merges: Math.round(t5 - t4),
     },
   };
   return { cwd, info, rules, commits, result };
