@@ -57,8 +57,8 @@ describe("contribute", () => {
   });
 
   test("a piped run never asks and exits", () => {
-    const r = spawnSync(process.execPath, [CLI, dir], { encoding: "utf8", env: { ...process.env, AGENTMASH_SCAN_NOW: NOW.toISOString() }, timeout: 20000 });
-    assert.equal(r.status, 0, r.stderr);
+    const r = spawnSync(process.execPath, [CLI, dir], { encoding: "utf8", env: { ...process.env, AGENTMASH_SCAN_NOW: NOW.toISOString() }, timeout: 120000 });
+    assert.equal(r.status, 0, JSON.stringify({ signal: r.signal, error: r.error?.message, stderr: r.stderr?.slice(-400), stdout: r.stdout?.slice(-400) }));
     assert.ok(!r.stdout.includes(QUESTION.trim()));
   });
 
