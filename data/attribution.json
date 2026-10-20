@@ -79,6 +79,15 @@
         },
         {
           "kind": "trailer",
+          "key": "Co-authored-by",
+          "name_pattern": "^codex \\(",
+          "example": "Co-authored-by: codex (gpt-5.5) <ai@local>",
+          "note": "same ai@local convention as the opencode trailer, one organisation",
+          "status": "verified",
+          "evidence": ["https://github.com/eclipse-oniro-mirrors/security_access_token/commit/5673cf34213a589bfcf9c908c91d9da3f4ca905a"]
+        },
+        {
+          "kind": "trailer",
           "key": "Generated-with",
           "pattern": "^Codex\\b",
           "example": "Generated-with: Codex",
@@ -337,7 +346,14 @@
       "id": "aider",
       "name": "Aider",
       "signals": [
-        { "kind": "author", "name_pattern": "\\(aider\\)$", "status": "unverified", "evidence": [] },
+        {
+          "kind": "author",
+          "name_pattern": " \\(aider\\)$",
+          "example": "Paul Gauthier (aider) <paul@aider.chat>",
+          "note": "older Aider default: the user's own name with an (aider) suffix",
+          "status": "verified",
+          "evidence": ["https://github.com/Aider-AI/aider/commit/9f1ef3f49f6b14542c2a7fa954877a48c0a1813e"]
+        },
         {
           "kind": "trailer",
           "key": "Co-authored-by",
@@ -354,7 +370,18 @@
       "name": "OpenCode",
       "signals": [
         { "kind": "author", "name_pattern": "^opencode-agent\\[bot\\]$", "status": "unverified", "evidence": [] },
-        { "kind": "trailer", "key": "Co-authored-by", "name_pattern": "^opencode\\b", "status": "unverified", "evidence": [] }
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "name_pattern": "^opencode\\b",
+          "example": "Co-authored-by: opencode (glm-5.2) <ai@local>",
+          "note": "seen in one organisation's repos with an ai@local email; not shown to be an OpenCode default",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/eclipse-oniro-mirrors/security_asset/commit/7eced6e18f8abb26f2831ab7c08dc9b12207c216",
+            "https://github.com/eclipse-oniro-mirrors/ability_ability_runtime/commit/73b1659209693d8d51b40381d720f01ed479b4c8"
+          ]
+        }
       ]
     },
     {
