@@ -1,6 +1,6 @@
 {
   "name": "agentmash-scan",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Count how often AI coding agents stepped on each other's files in your git history. Runs locally, no login.",
   "type": "module",
