@@ -265,7 +265,21 @@
       "id": "jules",
       "name": "Jules",
       "signals": [
-        { "kind": "author", "name_pattern": "^google-labs-jules\\[bot\\]$", "status": "unverified", "evidence": [] }
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "email_pattern": "^\\d+\\+google-labs-jules\\[bot\\]@users\\.noreply\\.github\\.com$",
+          "example": "Co-authored-by: google-labs-jules[bot] <161369871+google-labs-jules[bot]@users.noreply.github.com>",
+          "status": "verified",
+          "evidence": ["https://github.com/gwelby/PhiFlow/commit/a5459152e32f13507796605cbc9852fb4a88f20a"]
+        },
+        {
+          "kind": "author",
+          "email_pattern": "^\\d+\\+google-labs-jules\\[bot\\]@users\\.noreply\\.github\\.com$",
+          "example": "google-labs-jules[bot] <161369871+google-labs-jules[bot]@users.noreply.github.com>",
+          "status": "verified",
+          "evidence": ["https://github.com/Milky1919/heictoimg/commit/add599a5c25584c1a11bedb777e2fb16db8000ca"]
+        }
       ]
     },
     {
