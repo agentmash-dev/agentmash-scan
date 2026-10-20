@@ -208,8 +208,34 @@
       "id": "devin",
       "name": "Devin",
       "signals": [
-        { "kind": "author", "name_pattern": "^devin-ai-integration\\[bot\\]$", "status": "unverified", "evidence": [] },
-        { "kind": "branch", "prefix": "devin/", "status": "unverified", "evidence": [] }
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "email_pattern": "^\\d+\\+devin-ai-integration\\[bot\\]@users\\.noreply\\.github\\.com$",
+          "example": "Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/chhoumann/quickadd/commit/c9de468888781f470a76458930d1dc50f1e428af",
+            "https://github.com/Golem-Base/optimism/commit/bf69c6b9cb2c518705df1de898b06dbafa1e0024"
+          ]
+        },
+        {
+          "kind": "author",
+          "email_pattern": "^\\d+\\+devin-ai-integration\\[bot\\]@users\\.noreply\\.github\\.com$",
+          "example": "devin-ai-integration[bot] <158243242+devin-ai-integration[bot]@users.noreply.github.com> (display name also seen as `Devin AI`)",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/chhoumann/quickadd/commit/dc9a6504c3c8704d743b0c08fdd8343bd375883f",
+            "https://github.com/kondabattulabalachandra-creator/LUXEE-GROWTH/commit/e8f343aefa06a9ff3d1e31829f472d74b8018864"
+          ]
+        },
+        {
+          "kind": "branch",
+          "prefix": "devin/",
+          "example": "Merge pull request #1 from devin/1792327876-luxury-redesign",
+          "status": "verified",
+          "evidence": ["https://github.com/kondabattulabalachandra-creator/LUXEE-GROWTH/commit/e8f343aefa06a9ff3d1e31829f472d74b8018864"]
+        }
       ]
     },
     {
@@ -218,6 +244,21 @@
       "signals": [
         { "kind": "trailer", "key": "Co-authored-by", "name_pattern": "^Gemini\\b", "status": "unverified", "evidence": [] },
         { "kind": "message", "pattern": "Generated with \\[?Gemini CLI\\b", "status": "unverified", "evidence": [] }
+      ]
+    },
+    {
+      "id": "gemini-code-assist",
+      "name": "Gemini Code Assist",
+      "signals": [
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "name_pattern": "^gemini-code-assist\\[bot\\]$",
+          "example": "Co-authored-by: gemini-code-assist[bot] <176961590+gemini-code-assist[bot]@users.noreply.github.com>",
+          "note": "review suggestions applied in the PR; AI-written lines, not the Gemini CLI",
+          "status": "verified",
+          "evidence": ["https://github.com/google-gemini/gemini-cli/commit/a5cdfab7216bcad51b2b354e2bc31b9a8380bfa7"]
+        }
       ]
     },
     {
@@ -261,8 +302,12 @@
     }
   ],
   "automation": {
-    "name_pattern": "\\[bot\\]$",
-    "note": "any other [bot] author (dependabot, renovate, github-actions, release bots) counts as automation: shown, never an agent, left out of overlaps"
+    "name_pattern": "^(dependabot|dependabot-preview|renovate|renovate-bot|github-actions|release-please|changeset-bot|changesets-bot|semantic-release-bot|pre-commit-ci|allcontributors|all-contributors|imgbot|snyk-bot|mergify|depfu|pyup-bot|greenkeeper|copybara-service|crowdin-bot|weblate|transifex-integration|stainless-app|stainless-bot)(\\[bot\\])?$|[-_ ]robot$|^GitHub Action$",
+    "note": "known automation (dependency, release and CI bots): shown as a count, never an agent, left out of overlaps"
+  },
+  "unknown_bot": {
+    "name_pattern": "(\\[bot\\]|[-_ ]bot)$",
+    "note": "any other bot: printed by name so the user can see it (custom GitHub Apps like keppo-bot[bot] write features), never counted as an agent or a human"
   },
   "noise": {
     "path_pattern": "(^|/)(package-lock\\.json|pnpm-lock\\.yaml|yarn\\.lock|bun\\.lockb?|Cargo\\.lock|go\\.sum|poetry\\.lock|uv\\.lock|Gemfile\\.lock|composer\\.lock|CHANGELOG\\.md)$",
