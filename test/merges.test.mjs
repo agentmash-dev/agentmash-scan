@@ -65,6 +65,16 @@ describe("fixture merges", () => {
     assert.equal(r.conflicted, 2);
   });
 
+  test("a parent that is not a commit is skipped like a missing one", async () => {
+    const commits = classify(await rawCommits(dir), rules);
+    const merge = commits.find((c) => c.isMerge && c.parents.length === 2);
+    const blob = execFileSync("git", ["rev-parse", "HEAD:README.md"], { cwd: dir, encoding: "utf8" }).trim();
+    const fake = { ...merge, sha: "e".repeat(40), parents: [merge.parents[0], blob] };
+    const info = await repoInfo(dir);
+    const r = await checkMerges({ cwd: dir, objectsDir: info.objectsDir, version: await gitVersion(dir), commits: [...commits, fake], rules });
+    assert.deepEqual([r.missingParents, r.rerun, r.unchecked, r.conflicted], [1, 5, 0, 2]);
+  });
+
   test("a time budget stops the pass and reports what is left", async () => {
     const commits = classify(await rawCommits(dir), rules);
     const info = await repoInfo(dir);

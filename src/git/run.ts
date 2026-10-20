@@ -116,7 +116,7 @@ export async function repoInfo(cwd: string): Promise<RepoInfo> {
       ["rev-parse", "--absolute-git-dir", "--is-bare-repository", "--is-shallow-repository", "--git-path", "objects", "--git-path", "shallow"],
       { cwd },
     );
-    lines = stdout.trim().split("\n");
+    lines = stdout.trim().split(/\r?\n/);
   } catch (e) {
     if (e instanceof GitError && e.exitCode !== null) throw new GitError("not a git repository", e.exitCode, e.stderr);
     throw e;

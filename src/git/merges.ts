@@ -18,7 +18,7 @@ export interface MergeResult {
   rerun: number;
   /** 3+ parents: git's octopus strategy refuses conflicting merges, so these were clean */
   octopus: number;
-  /** a parent object is not in the repo; rerunning would abort the whole batch */
+  /** a parent is not in the repo or is not a commit; rerunning would abort the whole batch */
   missingParents: number;
   /** left unchecked when the time budget ran out */
   unchecked: number;
@@ -79,8 +79,9 @@ async function runBatch(cwd: string, objectsDir: string, pairs: readonly string[
       },
       signal,
     });
-  } catch (e) {
-    if (!(e instanceof Error && e.name === "AbortError")) throw e;
+  } catch {
+    // the time budget ran out, or git stopped on a merge it can't redo; what finished still counts
+    // and the rest is reported as unchecked
   } finally {
     rmSync(temp, { recursive: true, force: true, maxRetries: 3 });
   }
@@ -107,13 +108,15 @@ export async function checkMerges(input: MergeInput): Promise<MergeResult> {
   }
 
   const { stdout } = await runGit(["cat-file", "--batch-check"], { cwd: input.cwd, input: two.flatMap((c) => c.parents).join("\n") + "\n" });
-  const missing = new Set(
+  // "<sha> commit <size>" for a usable parent; "<sha> missing" or any other type would abort the batch
+  const isCommit = new Set(
     stdout
-      .split("\n")
-      .filter((l) => l.endsWith(" missing"))
-      .map((l) => l.split(" ")[0]),
+      .split(/\r?\n/)
+      .map((l) => l.split(" "))
+      .filter((p) => p[1] === "commit")
+      .map((p) => p[0]),
   );
-  const feed = two.filter((c) => !c.parents.some((p) => missing.has(p)));
+  const feed = two.filter((c) => c.parents.every((p) => isCommit.has(p)));
 
   const lanes = Math.max(1, Math.min(input.parallel ?? availableParallelism(), Math.ceil(feed.length / 16)));
   const batches: Commit[][] = Array.from({ length: lanes }, () => []);

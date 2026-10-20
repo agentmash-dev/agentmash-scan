@@ -96,7 +96,7 @@ export async function collect(opts: ScanOptions = {}): Promise<ScanContext & { r
     const agent = branchAgent(c.message.split("\n", 1)[0] ?? "", rules);
     if (!agent) continue;
     const { stdout } = await runGit(["rev-list", `${c.parents[0]}..${c.parents[1]}`, "--"], { cwd });
-    for (const sha of stdout.split("\n")) {
+    for (const sha of stdout.split(/\r?\n/)) {
       if (sha && inWindow.has(sha) && !branchAgents.has(sha)) branchAgents.set(sha, agent);
     }
   }
