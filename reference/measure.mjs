@@ -38,7 +38,8 @@ for (const a of rules.agents) {
   }
 }
 compiled.sort((x, y) => KIND_RANK[x.kind] - KIND_RANK[y.kind]);
-const automationRe = new RegExp(rules.automation?.name_pattern ?? "\\[bot\\]$", "i");
+const automationRe = new RegExp(rules.automation?.name_pattern ?? "^(dependabot|renovate|github-actions)(\\[bot\\])?$", "i");
+const unknownBotRe = new RegExp(rules.unknown_bot?.name_pattern ?? "(\\[bot\\]|[-_ ]bot)$", "i");
 
 function parseTrailers(body) {
   const out = [];
@@ -113,20 +114,20 @@ const tParse = performance.now();
 
 // branch-prefix attribution through merge subjects
 const branchRules = compiled.filter((r) => r.kind === "branch");
+// candidates: the ref as written, and the ref without a leading owner segment
 const branchOf = (subject) => {
-  let m = /^Merge pull request #\d+ from [^/\s]+\/(\S+)/.exec(subject);
-  if (m) return m[1];
+  let m = /^Merge pull request #\d+ from (\S+)/.exec(subject);
+  if (m) return [m[1], m[1].replace(/^[^/]+\//, "")];
   m = /^Merge (?:remote-tracking )?branch '(?:origin\/)?([^']+)'/.exec(subject);
-  return m ? m[1] : null;
+  return m ? [m[1]] : [];
 };
 const bySha = new Map(commits.map((c) => [c.sha, c]));
 const branchAgent = new Map();
 let branchMerges = 0;
 for (const c of commits) {
   if (c.parents.length !== 2) continue;
-  const b = branchOf(c.body.split("\n")[0]);
-  if (!b) continue;
-  const r = branchRules.find((x) => b.toLowerCase().startsWith(x.s.prefix.toLowerCase()));
+  const refs = branchOf(c.body.split("\n")[0]).map((b) => b.toLowerCase());
+  const r = branchRules.find((x) => refs.some((b) => b.startsWith(x.s.prefix.toLowerCase())));
   if (!r) continue;
   branchMerges++;
   const shas = git(["rev-list", `${c.parents[0]}..${c.parents[1]}`]).split("\n").filter(Boolean);
@@ -154,6 +155,7 @@ let automation = 0;
 let multiAgent = 0;
 const perAgent = {};
 const perKind = {};
+const unknownBots = {};
 for (const c of commits) {
   c.person = find(`n:${c.an.toLowerCase()}`);
   if (c.parents.length > 1) continue;
@@ -163,6 +165,11 @@ for (const c of commits) {
   if (hits.size === 0 && automationRe.test(c.an)) {
     c.automation = true;
     automation++;
+    continue;
+  }
+  if (hits.size === 0 && unknownBotRe.test(c.an)) {
+    c.automation = true;
+    unknownBots[c.an] = (unknownBots[c.an] ?? 0) + 1;
     continue;
   }
   if (hits.size > 1) multiAgent++;
@@ -300,6 +307,7 @@ const result = {
   commits: total,
   nonMerge,
   automation,
+  unknownBots,
   perAgent,
   perKind,
   multiAgent,
