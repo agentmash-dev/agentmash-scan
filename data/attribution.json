@@ -338,7 +338,15 @@
       "name": "Aider",
       "signals": [
         { "kind": "author", "name_pattern": "\\(aider\\)$", "status": "unverified", "evidence": [] },
-        { "kind": "trailer", "key": "Co-authored-by", "email_pattern": "^noreply@aider\\.chat$", "status": "unverified", "evidence": [] }
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "email_pattern": "^aider@aider\\.chat$",
+          "example": "Co-authored-by: aider (ollama_chat/qwen3-coder:30b) <aider@aider.chat>",
+          "note": "the name carries the model; the same squash commits also carry Claude Code and Cursor Agent trailers",
+          "status": "verified",
+          "evidence": ["https://github.com/mattehe-creator/appfabriken/commit/1abeef91c5f331d10f9f5fb3c3bafa29079ac1da"]
+        }
       ]
     },
     {
