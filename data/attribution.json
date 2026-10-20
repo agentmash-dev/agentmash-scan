@@ -432,6 +432,10 @@
     "name_pattern": "^(dependabot|dependabot-preview|renovate|renovate-bot|github-actions|release-please|changeset-bot|changesets-bot|semantic-release-bot|pre-commit-ci|allcontributors|all-contributors|imgbot|snyk-bot|mergify|depfu|pyup-bot|greenkeeper|copybara-service|crowdin-bot|weblate|transifex-integration|stainless-app|stainless-bot)(\\[bot\\])?$|[-_ ]robot$|^GitHub Action$",
     "note": "known automation (dependency, release and CI bots): shown as a count, never an agent, left out of overlaps"
   },
+  "bot_chores": {
+    "subject_pattern": "^(chore|build|ci)(\\([^)]*\\))?!?: (generate|regenerate|update .*(hash|hashes|lock|lockfile)|bump|release|publish|sync|refresh)\\b|^(release|publish)[-: ]|^Merge branch ",
+    "note": "a commit attributed only through a bot author (no trailer) whose subject looks like codegen, release or hash-update work is automation: agent bots double as CI identities (opencode-agent[bot], gemini-cli[bot])"
+  },
   "unknown_bot": {
     "name_pattern": "(\\[bot\\]|[-_ ]bot)$",
     "note": "any other bot: printed by name so the user can see it (custom GitHub Apps like keppo-bot[bot] write features), never counted as an agent or a human"

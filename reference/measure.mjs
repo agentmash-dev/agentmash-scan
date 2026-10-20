@@ -40,6 +40,7 @@ for (const a of rules.agents) {
 compiled.sort((x, y) => KIND_RANK[x.kind] - KIND_RANK[y.kind]);
 const automationRe = new RegExp(rules.automation?.name_pattern ?? "^(dependabot|renovate|github-actions)(\\[bot\\])?$", "i");
 const unknownBotRe = new RegExp(rules.unknown_bot?.name_pattern ?? "(\\[bot\\]|[-_ ]bot)$", "i");
+const botChoreRe = rules.bot_chores ? new RegExp(rules.bot_chores.subject_pattern, "i") : null;
 
 function parseTrailers(body) {
   const out = [];
@@ -153,6 +154,7 @@ for (const c of commits) union(`n:${c.an.toLowerCase()}`, `e:${normEmail(c.ae)}`
 let nonMerge = 0;
 let automation = 0;
 let multiAgent = 0;
+let botChores = 0;
 const perAgent = {};
 const perKind = {};
 const unknownBots = {};
@@ -162,6 +164,13 @@ for (const c of commits) {
   nonMerge++;
   const hits = attribute(c);
   if (hits.size === 0 && branchAgent.has(c.sha)) hits.set(branchAgent.get(c.sha), "branch");
+  const onlyBotAuthor = hits.size > 0 && [...hits.values()].every((k) => k === "author") && unknownBotRe.test(c.an);
+  if (onlyBotAuthor && botChoreRe?.test(c.body.split("\n")[0])) {
+    hits.clear();
+    c.automation = true;
+    botChores++;
+    continue;
+  }
   if (hits.size === 0 && automationRe.test(c.an)) {
     c.automation = true;
     automation++;
@@ -179,6 +188,11 @@ for (const c of commits) {
   perAgent[key] = (perAgent[key] ?? 0) + 1;
   if (c.agent) perKind[hits.get(c.agent)] = (perKind[hits.get(c.agent)] ?? 0) + 1;
 }
+// Unattributed commits by people who have at least one attributed agent commit in the window
+const agentUsers = new Set(commits.filter((c) => c.agent).map((c) => c.person));
+const unattributedFromAgentUsers = commits.filter(
+  (c) => c.parents.length === 1 && !c.automation && !c.agent && agentUsers.has(c.person),
+).length;
 const tAttr = performance.now();
 
 // ---------- overlaps ----------
@@ -308,10 +322,13 @@ const result = {
   commits: total,
   nonMerge,
   automation,
+  botChores,
   unknownBots,
   perAgent,
   perKind,
   multiAgent,
+  agentUsers: agentUsers.size,
+  unattributedFromAgentUsers,
   branchMerges,
   people: new Set(commits.map((c) => c.person)).size,
   merges: merges.length,
