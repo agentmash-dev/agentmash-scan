@@ -1,0 +1,272 @@
+{
+  "schema": 1,
+  "updated": "2026-10-20",
+  "precedence": ["trailer", "author", "message", "branch"],
+  "matching": {
+    "trailer": "a line `Key: value` anywhere in the message; key compared case-insensitively; name_pattern and email_pattern test the `Name <email>` parts, pattern tests the whole value",
+    "author": "name_pattern / email_pattern test the commit author or committer identity",
+    "message": "pattern tests the whole commit message",
+    "branch": "prefix tests a branch name taken from a merge subject (`Merge pull request #N from owner/<branch>`, `Merge branch '<branch>'`); attributes the commits that merge brought in",
+    "status": "only `verified` signals are applied; `unverified` ones are kept as leads and ignored"
+  },
+  "agents": [
+    {
+      "id": "claude-code",
+      "name": "Claude Code",
+      "signals": [
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "name_pattern": "^Claude\\b",
+          "email_pattern": "^noreply@anthropic\\.com$",
+          "example": "Co-Authored-By: Claude Opus 5.5 (1M context) <noreply@anthropic.com>",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/matthewwong525/WongStack/commit/c22d448bfd8204994ba92f65b5f722762ce6f052",
+            "https://github.com/alexec/Agents/commit/6e16de9e5b9071b40b99f296dac4c1d5a31bb20f"
+          ]
+        },
+        {
+          "kind": "trailer",
+          "key": "Claude-Session",
+          "pattern": "^https://claude\\.ai/code/session_",
+          "example": "Claude-Session: https://claude.ai/code/session_012tgsfkFuM4dSnRf92adWjx",
+          "status": "verified",
+          "evidence": ["https://github.com/maestroDev3/GreenFriend/commit/7fb334dc4760bd2abaaa0882e14be7a9d58996b9"]
+        },
+        {
+          "kind": "author",
+          "name_pattern": "^claude\\[bot\\]$",
+          "example": "claude[bot] <209825114+claude[bot]@users.noreply.github.com>",
+          "status": "verified",
+          "evidence": ["https://github.com/beyondessential/tamanu/commit/5db47f2051087d175c006673dedce491a5881d66"]
+        },
+        {
+          "kind": "message",
+          "pattern": "Generated with \\[?Claude Code\\b",
+          "flags": "i",
+          "example": "🤖 Generated with [Claude Code](https://claude.com/claude-code)",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/usenotra/notra-mcp/commit/29a03f58008004655d7eb7e1f46fc44d435f413e",
+            "https://github.com/nuwave/lighthouse/commit/3b6872c6755175ca303bb25e06535f6e0657e107"
+          ]
+        },
+        {
+          "kind": "branch",
+          "prefix": "claude/",
+          "example": "Merge pull request #6 from nelaka141/claude/project-thread-ekowgu",
+          "status": "verified",
+          "evidence": ["https://github.com/nelaka141/personnel-finance-manager/commit/8d885cc1a8f89abe060d53fd0b3f31393a2c65a8"]
+        }
+      ]
+    },
+    {
+      "id": "codex",
+      "name": "Codex",
+      "signals": [
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "name_pattern": "^Codex\\b",
+          "email_pattern": "@openai\\.com$",
+          "example": "Co-authored-by: Codex <codex@openai.com>",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/pj-tmt/tmt/commit/e1f206b3343cf5ee3652c124b324349a2d484557",
+            "https://github.com/openflowfm/visuals/commit/f8b135806eb1f3b2f576a35ce765a6425fe1b8e6"
+          ]
+        },
+        {
+          "kind": "trailer",
+          "key": "Generated-with",
+          "pattern": "^Codex\\b",
+          "example": "Generated-with: Codex",
+          "status": "verified",
+          "evidence": ["https://github.com/ivanarama/PromptPilot/commit/4c68c1b77bc28013c36f1d5394384726bdf1cf9a"]
+        },
+        {
+          "kind": "author",
+          "name_pattern": "^chatgpt-codex-connector\\[bot\\]$",
+          "example": "chatgpt-codex-connector[bot] <chatgpt-codex-connector[bot]@users.noreply.github.com>",
+          "status": "verified",
+          "evidence": ["https://github.com/LionSR/TNLean/commit/de11a9ef4d947b231e450d86104167c85d9ec27b"]
+        },
+        {
+          "kind": "message",
+          "pattern": "Generated with \\[?Codex\\b",
+          "flags": "i",
+          "example": "🤖 Generated with Codex",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/AllenMuu/stackwatch/commit/125f9850ed9be2b112a4353bd4b82e8a1a053c10",
+            "https://github.com/fglock/PerlOnJava/commit/7e5035d8fc67c4b704a78e6604564a061fd2abfd"
+          ]
+        },
+        {
+          "kind": "branch",
+          "prefix": "codex/",
+          "example": "Merge pull request #1125 from codex/issue-1117-int-operator-members",
+          "status": "verified",
+          "evidence": ["https://github.com/scytrowski/dotty-rs/commit/57da0cc0747a55e5b5930b9ab8ea3901343e6269"]
+        }
+      ]
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "signals": [
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "email_pattern": "^cursoragent@cursor\\.com$",
+          "example": "Co-authored-by: Cursor <cursoragent@cursor.com>",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/mattermost/mattermost/commit/14ee0ae9a330c5fecf268731959c16a4c081e8be",
+            "https://github.com/undevy-org/tablewright/commit/809750b2cb756f0e186e7c9eff43de122f2ea1b1"
+          ]
+        },
+        {
+          "kind": "author",
+          "email_pattern": "^cursoragent@cursor\\.com$",
+          "example": "Cursor Agent <cursoragent@cursor.com>",
+          "note": "background / cloud agent commits as itself, the human is a co-author",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/AuraHQ-ai/aura/commit/f35a3e80a083fc642d794140a3e6a88d46e3009a",
+            "https://github.com/AIRP-spec/inference-advocate/commit/509121919cbd15df66d2586c4d4c0f2e408b7659"
+          ]
+        },
+        {
+          "kind": "branch",
+          "prefix": "cursor/",
+          "example": "PR head cursor/rust-image-labels-auditable-4f2b (squash-merged, so the name is not in git history)",
+          "status": "verified",
+          "evidence": ["https://github.com/langfuse/langfuse/commit/7393a37d9af02cd8b813ed336f4bfeaae0d85fdb"]
+        }
+      ]
+    },
+    {
+      "id": "copilot",
+      "name": "GitHub Copilot",
+      "signals": [
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "email_pattern": "^\\d+\\+Copilot@users\\.noreply\\.github\\.com$",
+          "example": "Co-authored-by: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>",
+          "note": "three ids seen: 198982749 coding agent, 223556219 local Copilot session, 175728472 Copilot Autofix",
+          "status": "verified",
+          "evidence": [
+            "https://github.com/microsoft/typescript-go/commit/65535b2038f285dcb98703769bf08002b25ca5a7",
+            "https://github.com/microsoft/typescript-go/commit/6924feff43f1d5d95679be110f7e06e10697c8df",
+            "https://github.com/microsoft/typescript-go/commit/0f714a5386993872feb5ab81795ec8e22c4638bd"
+          ]
+        },
+        {
+          "kind": "trailer",
+          "key": "Co-authored-by",
+          "name_pattern": "^Copilot Autofix\\b",
+          "example": "Co-authored-by: Copilot Autofix powered by AI <223894421+github-code-quality[bot]@users.noreply.github.com>",
+          "note": "code scanning / code quality autofix; a second bot id outside the +Copilot pattern",
+          "status": "verified",
+          "evidence": ["https://github.com/siemens/simatic-s7-webserver-api/commit/2a7bcd8221b6baea79f959b72a17b36c56f772a0"]
+        },
+        {
+          "kind": "trailer",
+          "key": "Copilot-Session",
+          "example": "Copilot-Session: 9df06ece-6920-4e47-8e73-70c397aeaf85",
+          "status": "verified",
+          "evidence": ["https://github.com/microsoft/typescript-go/commit/04f7f3db2bf2b3fe51eedba2aafcb05a907ffa94"]
+        },
+        {
+          "kind": "trailer",
+          "key": "Agent-Logs-Url",
+          "pattern": "^https://github\\.com/[^/]+/[^/]+/sessions/",
+          "example": "Agent-Logs-Url: https://github.com/<owner>/<repo>/sessions/<uuid>",
+          "status": "verified",
+          "evidence": ["https://github.com/Mryan2005/novel-manager/commit/a6fc1dfdf3befcf3f87fc81b76fb5d56128f739b"]
+        },
+        {
+          "kind": "author",
+          "email_pattern": "^\\d+\\+Copilot@users\\.noreply\\.github\\.com$",
+          "example": "copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>",
+          "status": "verified",
+          "evidence": ["https://github.com/Mryan2005/novel-manager/commit/a6fc1dfdf3befcf3f87fc81b76fb5d56128f739b"]
+        },
+        {
+          "kind": "branch",
+          "prefix": "copilot/",
+          "example": "PR head copilot/fix-go-to-definition-jsx-tag-edge (squash-merged, so the name is not in git history)",
+          "status": "verified",
+          "evidence": ["https://github.com/microsoft/typescript-go/commit/c6b013f5706d58582f566df778cc0df2683b58f5"]
+        }
+      ]
+    },
+    {
+      "id": "devin",
+      "name": "Devin",
+      "signals": [
+        { "kind": "author", "name_pattern": "^devin-ai-integration\\[bot\\]$", "status": "unverified", "evidence": [] },
+        { "kind": "branch", "prefix": "devin/", "status": "unverified", "evidence": [] }
+      ]
+    },
+    {
+      "id": "gemini-cli",
+      "name": "Gemini CLI",
+      "signals": [
+        { "kind": "trailer", "key": "Co-authored-by", "name_pattern": "^Gemini\\b", "status": "unverified", "evidence": [] },
+        { "kind": "message", "pattern": "Generated with \\[?Gemini CLI\\b", "status": "unverified", "evidence": [] }
+      ]
+    },
+    {
+      "id": "jules",
+      "name": "Jules",
+      "signals": [
+        { "kind": "author", "name_pattern": "^google-labs-jules\\[bot\\]$", "status": "unverified", "evidence": [] }
+      ]
+    },
+    {
+      "id": "aider",
+      "name": "Aider",
+      "signals": [
+        { "kind": "author", "name_pattern": "\\(aider\\)$", "status": "unverified", "evidence": [] },
+        { "kind": "trailer", "key": "Co-authored-by", "email_pattern": "^noreply@aider\\.chat$", "status": "unverified", "evidence": [] }
+      ]
+    },
+    {
+      "id": "opencode",
+      "name": "OpenCode",
+      "signals": [
+        { "kind": "author", "name_pattern": "^opencode-agent\\[bot\\]$", "status": "unverified", "evidence": [] },
+        { "kind": "trailer", "key": "Co-authored-by", "name_pattern": "^opencode\\b", "status": "unverified", "evidence": [] }
+      ]
+    },
+    {
+      "id": "amp",
+      "name": "Amp",
+      "signals": [
+        { "kind": "trailer", "key": "Amp-Thread-ID", "status": "unverified", "evidence": [] },
+        { "kind": "trailer", "key": "Co-authored-by", "email_pattern": "^amp@ampcode\\.com$", "status": "unverified", "evidence": [] }
+      ]
+    },
+    {
+      "id": "factory-droid",
+      "name": "Factory Droid",
+      "signals": [
+        { "kind": "author", "name_pattern": "^factory-droid\\[bot\\]$", "status": "unverified", "evidence": [] },
+        { "kind": "trailer", "key": "Co-authored-by", "name_pattern": "^factory-droid\\[bot\\]$", "status": "unverified", "evidence": [] }
+      ]
+    }
+  ],
+  "automation": {
+    "name_pattern": "\\[bot\\]$",
+    "note": "any other [bot] author (dependabot, renovate, github-actions, release bots) counts as automation: shown, never an agent, left out of overlaps"
+  },
+  "noise": {
+    "path_pattern": "(^|/)(package-lock\\.json|pnpm-lock\\.yaml|yarn\\.lock|bun\\.lockb?|Cargo\\.lock|go\\.sum|poetry\\.lock|uv\\.lock|Gemfile\\.lock|composer\\.lock|CHANGELOG\\.md)$",
+    "max_files_per_commit": 100,
+    "note": "lockfiles, changelogs and commits touching more than 100 files are left out of overlaps"
+  }
+}
