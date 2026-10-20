@@ -1,0 +1,38 @@
+agentmash scan · last 90 days · repo (main)
+
+Agents in history
+  Claude Code          14 commits
+  Codex                 9 commits
+  Cursor                5 commits
+  Aider                 2 commits
+  Amp                   1 commit
+  Antigravity           1 commit
+  Devin                 1 commit
+  Factory Droid         1 commit
+  Gemini CLI            1 commit
+  Gemini Code Assist    1 commit
+  GitHub Copilot        1 commit
+  Jules                 1 commit
+  OpenCode              1 commit
+  Unattributed         20 commits   no agent mark, 31% of commits
+  Automation            4 commits   dependency, release and CI bots
+  Other bots            1 commit    acme-agent[bot] 1
+  A bot above is an agent? Count it with --agent-bot "<name>".
+
+Collisions
+  Same file changed by 2+ agents within 24h     3 times
+  Agent and human on the same file within 24h   1 time
+  Merges that conflicted                        2 of 6
+    resolved by Claude Code                     1
+    resolved by a human                         1
+  Hottest files
+    src/api.ts                                  2 overlaps
+    src/edge.ts                                 1 overlap
+
+Your AI agents stepped on each other 3 times in 90 days.
+Counted when two agent sessions changed the same file within 24h of each other.
+This is a lower bound: rebases and squash merges hide conflicts.
+Attribution is heuristic: 20 commits had no agent mark.
+
+Share your number:   npx agentmash-scan --card
+Catch it live:       npx agentmash login
