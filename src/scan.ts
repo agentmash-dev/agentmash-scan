@@ -76,7 +76,9 @@ export async function collect(opts: ScanOptions = {}): Promise<ScanContext & { r
   const since = opts.limit !== undefined ? 0 : until - Math.round(days * 86400);
   const rules = compileRules(opts.rules ?? loadRulesFile(), opts.agentBots ?? []);
 
-  const [info, ref, version] = await Promise.all([repoInfo(cwd), resolveRef(cwd, opts.branch), gitVersion(cwd)]);
+  // the repo check goes first: outside a repo its error is the one to show, not the ref's
+  const info = await repoInfo(cwd);
+  const [ref, version] = await Promise.all([resolveRef(cwd, opts.branch), gitVersion(cwd)]);
   const t1 = performance.now();
   const raw = await readLog(cwd, {
     sha: ref.sha,
